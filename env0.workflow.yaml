@@ -6,14 +6,14 @@ environments:
     name: "Env0 Azure Network AGA"
     templateName: "Env0 Azure Network AGA"
     workspace: "env0-live-demo-aga-network"
-    revision: "v1.0.1"
+    revision: "main"
     requiresApproval: false
 
   compute:
     name: "Env0 Azure Compute AGA"
     templateName: "Env0 Azure Compute AGA"
     workspace: "env0-live-demo-aga-compute"
-    revision: "v1.0.1"
+    revision: "main"
     requiresApproval: false
     needs:
       - network
