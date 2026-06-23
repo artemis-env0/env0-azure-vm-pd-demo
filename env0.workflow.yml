@@ -1,0 +1,23 @@
+settings:
+  environmentRemovalStrategy: detach
+
+environments:
+  network:
+    name: "Env0 Live Demo AGA Network"
+    vcs:
+      type: opentofu
+      repository: "https://github.com/artemis-env0/env0-azure-vm-pd-demo"
+      path: "network"
+      opentofuVersion: "1.6.0"
+    workspace: "env0-live-demo-aga-network"
+
+  compute:
+    name: "Env0 Live Demo AGA Compute"
+    vcs:
+      type: opentofu
+      repository: "https://github.com/artemis-env0/env0-azure-vm-pd-demo"
+      path: "compute"
+      opentofuVersion: "1.6.0"
+    workspace: "env0-live-demo-aga-compute"
+    needs:
+      - network
