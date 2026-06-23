@@ -1,0 +1,54 @@
+version: 2
+shell: bash
+
+deploy:
+  steps:
+    terraformInit:
+      before:
+        - name: "Compute: Deployment Context"
+          run: |
+            echo "Preparing Env0 Live Demo AGA compute deployment"
+            echo "Working directory: $(pwd)"
+
+    setupVariables:
+      after:
+        - name: "Compute: Validate Required Variables"
+          run: |
+            if [ -z "${TF_VAR_resource_group_name:-}" ]; then
+              echo "TF_VAR_resource_group_name must be supplied from the network child environment output" 1>&2
+              exit 1
+            fi
+
+            if [ -z "${TF_VAR_location:-}" ]; then
+              echo "TF_VAR_location must be supplied from the network child environment output" 1>&2
+              exit 1
+            fi
+
+            if [ -z "${TF_VAR_subnet_id:-}" ]; then
+              echo "TF_VAR_subnet_id must be supplied from the network child environment output" 1>&2
+              exit 1
+            fi
+
+            if [ -z "${TF_VAR_linux_admin_ssh_public_key:-}" ]; then
+              echo "TF_VAR_linux_admin_ssh_public_key must be supplied from the env0 Variable Set" 1>&2
+              exit 1
+            fi
+
+            if [ -z "${TF_VAR_windows_admin_password:-}" ]; then
+              echo "TF_VAR_windows_admin_password must be supplied from the env0 Variable Set" 1>&2
+              exit 1
+            fi
+
+            echo "Required compute variables are present"
+
+    terraformPlan:
+      after:
+        - name: "Compute: Plan Complete"
+          run: |
+            echo "Compute plan completed"
+
+    terraformApply:
+      after:
+        - name: "Compute: Apply Complete"
+          run: |
+            echo "Compute apply completed"

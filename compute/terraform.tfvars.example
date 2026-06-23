@@ -1,0 +1,14 @@
+name_prefix = "Env0-Live-Demo-AGA"
+
+resource_group_name = "Env0-Live-Demo-AGA-rg"
+location            = "eastus"
+subnet_id           = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Env0-Live-Demo-AGA-rg/providers/Microsoft.Network/virtualNetworks/Env0-Live-Demo-AGA-vnet/subnets/Env0-Live-Demo-AGA-private-subnet"
+
+linux_admin_ssh_public_key = "ssh-ed25519 REPLACE_WITH_PUBLIC_KEY Env0-Live-Demo-AGA"
+windows_admin_password     = "REPLACE_WITH_SECURE_PASSWORD"
+
+tags = {
+  Demo        = "Env0-Live-Demo-AGA"
+  Environment = "compute"
+  ManagedBy   = "env0"
+}
