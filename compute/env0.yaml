@@ -1,4 +1,3 @@
-```yaml
 version: 2
 shell: bash
 
@@ -52,4 +51,3 @@ deploy:
         - name: "Compute: Apply Complete"
           run: |
             echo "Compute apply completed"
-```
