@@ -6,14 +6,14 @@ environments:
     name: "Env0 Azure Network AGA"
     templateName: "Env0 Azure Network AGA"
     workspace: "env0-live-demo-aga-network"
-    revision: "feature/azure-vm-persistent-disk-demo/v1.0.1"
+    revision: "v1.0.1"
     requiresApproval: false
 
   compute:
     name: "Env0 Azure Compute AGA"
     templateName: "Env0 Azure Compute AGA"
     workspace: "env0-live-demo-aga-compute"
-    revision: "feature/azure-vm-persistent-disk-demo/v1.0.1"
+    revision: "v1.0.1"
     requiresApproval: false
     needs:
       - network
