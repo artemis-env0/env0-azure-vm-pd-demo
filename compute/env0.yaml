@@ -10,7 +10,6 @@ run: |
 echo "Preparing Env0 Live Demo AGA compute deployment"
 echo "Working directory: $(pwd)"
 
-```
 setupVariables:
   after:
     - name: "Compute: Validate Required Variables"
