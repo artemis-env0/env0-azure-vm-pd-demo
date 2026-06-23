@@ -3,21 +3,17 @@ settings:
 
 environments:
   network:
-    name: "Env0 Live Demo AGA Network"
-    vcs:
-      type: opentofu
-      repository: "https://github.com/artemis-env0/env0-azure-vm-pd-demo"
-      path: "network"
-      opentofuVersion: "1.6.0"
+    name: "Env0 Azure Network AGA"
+    templateName: "Env0 Azure Network AGA"
     workspace: "env0-live-demo-aga-network"
+    revision: "feature/azure-vm-persistent-disk-demo/v1.0.1"
+    requiresApproval: false
 
   compute:
-    name: "Env0 Live Demo AGA Compute"
-    vcs:
-      type: opentofu
-      repository: "https://github.com/artemis-env0/env0-azure-vm-pd-demo"
-      path: "compute"
-      opentofuVersion: "1.6.0"
+    name: "Env0 Azure Compute AGA"
+    templateName: "Env0 Azure Compute AGA"
     workspace: "env0-live-demo-aga-compute"
+    revision: "feature/azure-vm-persistent-disk-demo/v1.0.1"
+    requiresApproval: false
     needs:
       - network
