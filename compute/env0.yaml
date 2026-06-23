@@ -2,67 +2,67 @@ version: 2
 shell: bash
 
 deploy:
-steps:
-terraformInit:
-before:
-- name: "Compute: Deployment Context"
-run: |
-echo "Preparing Env0 Live Demo AGA compute deployment"
-echo "Working directory: $(pwd)"
+  steps:
+    terraformInit:
+      before:
+        - name: "Compute: Deployment Context"
+          run: |
+            echo "Preparing Env0 Live Demo AGA compute deployment"
+            echo "Working directory: $(pwd)"
 
-setupVariables:
-  after:
-    - name: "Compute: Validate Required Variables"
-      run: |
-        set -euo pipefail
+    setupVariables:
+      after:
+        - name: "Compute: Validate Required Variables"
+          run: |
+            set -euo pipefail
 
-        TFVARS_FILE="env0.auto.tfvars.json"
+            TFVARS_FILE="env0.auto.tfvars.json"
 
-        if [ ! -f "${TFVARS_FILE}" ]; then
-          echo "${TFVARS_FILE} was not found. env0 did not generate the Terraform variable file." 1>&2
-          exit 1
-        fi
+            if [ ! -f "${TFVARS_FILE}" ]; then
+              echo "${TFVARS_FILE} was not found. env0 did not generate the Terraform variable file." 1>&2
+              exit 1
+            fi
 
-        required_vars=(
-          resource_group_name
-          location
-          subnet_id
-          linux_admin_ssh_public_key
-          windows_admin_password
-        )
+            required_vars=(
+              resource_group_name
+              location
+              subnet_id
+              linux_admin_ssh_public_key
+              windows_admin_password
+            )
 
-        for key in "${required_vars[@]}"; do
-          if ! jq -e --arg key "${key}" 'has($key) and (.[$key] != null) and ((.[$key] | tostring | length) > 0)' "${TFVARS_FILE}" >/dev/null; then
-            echo "Terraform variable '${key}' is missing or empty in ${TFVARS_FILE}" 1>&2
-            exit 1
-          fi
-        done
+            for key in "${required_vars[@]}"; do
+              if ! jq -e --arg key "${key}" 'has($key) and (.[$key] != null) and ((.[$key] | tostring | length) > 0)' "${TFVARS_FILE}" >/dev/null; then
+                echo "Terraform variable '${key}' is missing or empty in ${TFVARS_FILE}" 1>&2
+                exit 1
+              fi
+            done
 
-        echo "Required compute Terraform variables are present"
+            echo "Required compute Terraform variables are present"
 
-terraformPlan:
-  before:
-    - name: "Compute: Import Existing linux01-data01 Attachment"
-      run: |
-        set -euo pipefail
+    terraformPlan:
+      before:
+        - name: "Compute: Import Existing linux01-data01 Attachment"
+          run: |
+            set -euo pipefail
 
-        RESOURCE_ADDRESS='module.compute.azurerm_virtual_machine_data_disk_attachment.data["linux01-data01"]'
-        RESOURCE_ID='/subscriptions/b48787a1-7145-425f-99af-62cde6c50e31/resourceGroups/Env0-Live-Demo-AGA-rg/providers/Microsoft.Compute/virtualMachines/Env0-Live-Demo-AGA-linux-01/dataDisks/Env0-Live-Demo-AGA-linux-01-data01'
+            RESOURCE_ADDRESS='module.compute.azurerm_virtual_machine_data_disk_attachment.data["linux01-data01"]'
+            RESOURCE_ID='/subscriptions/b48787a1-7145-425f-99af-62cde6c50e31/resourceGroups/Env0-Live-Demo-AGA-rg/providers/Microsoft.Compute/virtualMachines/Env0-Live-Demo-AGA-linux-01/dataDisks/Env0-Live-Demo-AGA-linux-01-data01'
 
-        if tofu state list | grep -Fx "${RESOURCE_ADDRESS}" >/dev/null; then
-          echo "Disk attachment is already in OpenTofu state: ${RESOURCE_ADDRESS}"
-        else
-          echo "Importing existing disk attachment into OpenTofu state: ${RESOURCE_ADDRESS}"
-          tofu import "${RESOURCE_ADDRESS}" "${RESOURCE_ID}"
-        fi
+            if tofu state list | grep -Fx "${RESOURCE_ADDRESS}" >/dev/null; then
+              echo "Disk attachment is already in OpenTofu state: ${RESOURCE_ADDRESS}"
+            else
+              echo "Importing existing disk attachment into OpenTofu state: ${RESOURCE_ADDRESS}"
+              tofu import "${RESOURCE_ADDRESS}" "${RESOURCE_ID}"
+            fi
 
-  after:
-    - name: "Compute: Plan Complete"
-      run: |
-        echo "Compute plan completed"
+      after:
+        - name: "Compute: Plan Complete"
+          run: |
+            echo "Compute plan completed"
 
-terraformApply:
-  after:
-    - name: "Compute: Apply Complete"
-      run: |
-        echo "Compute apply completed"
+    terraformApply:
+      after:
+        - name: "Compute: Apply Complete"
+          run: |
+            echo "Compute apply completed"
