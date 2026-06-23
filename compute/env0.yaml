@@ -1,3 +1,4 @@
+```yaml
 version: 2
 shell: bash
 
@@ -14,32 +15,31 @@ deploy:
       after:
         - name: "Compute: Validate Required Variables"
           run: |
-            if [ -z "${TF_VAR_resource_group_name:-}" ]; then
-              echo "TF_VAR_resource_group_name must be supplied from the network child environment output" 1>&2
+            set -euo pipefail
+
+            TFVARS_FILE="env0.auto.tfvars.json"
+
+            if [ ! -f "${TFVARS_FILE}" ]; then
+              echo "${TFVARS_FILE} was not found. env0 did not generate the Terraform variable file." 1>&2
               exit 1
             fi
 
-            if [ -z "${TF_VAR_location:-}" ]; then
-              echo "TF_VAR_location must be supplied from the network child environment output" 1>&2
-              exit 1
-            fi
+            required_vars=(
+              resource_group_name
+              location
+              subnet_id
+              linux_admin_ssh_public_key
+              windows_admin_password
+            )
 
-            if [ -z "${TF_VAR_subnet_id:-}" ]; then
-              echo "TF_VAR_subnet_id must be supplied from the network child environment output" 1>&2
-              exit 1
-            fi
+            for key in "${required_vars[@]}"; do
+              if ! jq -e --arg key "${key}" 'has($key) and (.[$key] != null) and ((.[$key] | tostring | length) > 0)' "${TFVARS_FILE}" >/dev/null; then
+                echo "Terraform variable '${key}' is missing or empty in ${TFVARS_FILE}" 1>&2
+                exit 1
+              fi
+            done
 
-            if [ -z "${TF_VAR_linux_admin_ssh_public_key:-}" ]; then
-              echo "TF_VAR_linux_admin_ssh_public_key must be supplied from the env0 Variable Set" 1>&2
-              exit 1
-            fi
-
-            if [ -z "${TF_VAR_windows_admin_password:-}" ]; then
-              echo "TF_VAR_windows_admin_password must be supplied from the env0 Variable Set" 1>&2
-              exit 1
-            fi
-
-            echo "Required compute variables are present"
+            echo "Required compute Terraform variables are present"
 
     terraformPlan:
       after:
@@ -52,3 +52,4 @@ deploy:
         - name: "Compute: Apply Complete"
           run: |
             echo "Compute apply completed"
+```
