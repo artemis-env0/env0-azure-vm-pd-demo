@@ -1,6 +1,6 @@
 module "network" {
-  source  = "api.env0.com/REPLACE_WITH_ENV0_ORG_ID/azure-network/azurerm"
-  version = "1.0.0"
+  source  = "api.env0.com/bde19c6d-d0dc-4b11-a951-8f43fe49db92/azure-network/azurerm"
+  version = "1.0.1"
 
   name_prefix           = var.name_prefix
   location              = var.location
