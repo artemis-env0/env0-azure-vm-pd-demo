@@ -7,17 +7,20 @@ deploy:
         - name: "Compute: Deployment Context"
           run: |
             echo "Preparing Env0 Live Demo AGA compute deployment"
-            echo "Working directory: ${PWD}"
+            echo "Working directory: $(pwd)"
     setupVariables:
       after:
         - name: "Compute: Validate Required Variables"
           run: |
             set -euo pipefail
+
             TFVARS_FILE="env0.auto.tfvars.json"
+
             if [ ! -f "${TFVARS_FILE}" ]; then
               echo "${TFVARS_FILE} was not found. env0 did not generate the Terraform variable file." 1>&2
               exit 1
             fi
+
             required_vars=(
               resource_group_name
               location
@@ -25,14 +28,22 @@ deploy:
               linux_admin_ssh_public_key
               windows_admin_password
             )
+
             for key in "${required_vars[@]}"; do
               if ! jq -e --arg key "${key}" 'has($key) and (.[$key] != null) and ((.[$key] | tostring | length) > 0)' "${TFVARS_FILE}" >/dev/null; then
                 echo "Terraform variable '${key}' is missing or empty in ${TFVARS_FILE}" 1>&2
                 exit 1
               fi
             done
+
             echo "Required compute Terraform variables are present"
     terraformPlan:
       after:
         - name: "Compute: Plan Complete"
           run: |
+            echo "Compute plan completed"
+    terraformApply:
+      after:
+        - name: "Compute: Apply Complete"
+          run: |
+            echo "Compute apply completed"
