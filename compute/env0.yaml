@@ -47,3 +47,16 @@ deploy:
         - name: "Compute: Apply Complete"
           run: |
             echo "Compute apply completed"
+destroy:
+  steps:
+    terraformInit:
+      before:
+        - name: "Compute: Destroy Context"
+          run: |
+            echo "Preparing Env0 Live Demo AGA compute destroy"
+            echo "Working directory: $(pwd)"
+    terraformDestroy:
+      after:
+        - name: "Compute: Destroy Complete"
+          run: |
+            echo "Compute destroy completed"
